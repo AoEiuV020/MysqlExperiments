@@ -89,5 +89,8 @@ drop view partyview;
 
 
 /*
-在题目1.2执行时，总出现Column ‘sex’ has duplicated value ‘?’ in ENUM问题，后来发现是数据库没设置编码所导致的错误，进行重建数据库时制定utf-8编码的修改后错误消除，从而说明默认编码的数据库建表时不能带有中文；
+在题目1.2执行时，总出现Column ‘sex’ has duplicated value ‘?’ in ENUM问题，
+后来发现是数据库没设置编码所导致的错误，
+进行重建数据库时制定utf-8编码的修改后错误消除，
+从而说明默认编码的数据库建表时不能带有中文；
  */
