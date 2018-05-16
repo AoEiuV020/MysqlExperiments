@@ -30,6 +30,7 @@ insert into salerecords (name, price, number)
   value ('开心果', 0.80, 654321);
 select *
 from salerecords;
+
 show binlog events;
 
 /*
@@ -37,10 +38,12 @@ mysqldump salesdb -rdump.sql -uroot -prootlocal
  */
 
 show variables like 'log_bin';
+
 insert into salerecords (name, price, number)
   value ('木瓜', 10.01, 2345);
 select *
 from salerecords;
+
 select now();
 show binlog events;
 
@@ -58,13 +61,15 @@ from salerecords;
 
 flush logs;
 /*
-sudo mysqlbinlog --no-defaults  --start-position=1832  --stop-position=2155 /var/lib/mysql/mysql-bin.000001 |mysql -uroot -prootlocal
+sudo mysqlbinlog --no-defaults  --start-position=1734  --stop-position=2026 /var/lib/mysql/mysql-bin.000001 |mysql -uroot -prootlocal
 
 sudo mysqlbinlog --no-defaults --start-datetime='2018-05-15 18:50:08' --stop-datetime='2018-05-15 18:50:43' /var/lib/mysql/mysql-bin.000001 |mysql -uroot -prootlocal
 sudo mysqlbinlog --no-defaults --stop-datetime='2018-05-15 18:27:57' /var/lib/mysql/mysql-bin.000001 |mysql -uroot -prootlocal
 sudo mysqlbinlog --no-defaults --start-datetime='2018-05-15 18:27:51' /var/lib/mysql/mysql-bin.000001 |mysql -uroot -prootlocal
 sudo mysqlbinlog --no-defaults /var/lib/mysql/mysql-bin.000001 |mysql -uroot -prootlocal
  */
+select *
+from salerecords;
 
 create user 'zl'@'localhost'
   identified by 'zl';
@@ -77,6 +82,7 @@ flush privileges;
 
 
 drop user 'zl'@'localhost';
+drop database if exists salesdb;
 
 /**
 在题目2.3执行时，发现没有启用log_bin功能，
@@ -84,4 +90,9 @@ drop user 'zl'@'localhost';
 最后正确启用然后重来，
 在题目2.3执行时，总是报错“mysqlbinlog: [ERROR] unknown variable 'default-character-set=utf8mb4'”
 最后给mysqlbinlog加上参数“--no-defaults”解决，
+ */
+/*
+掌握了MySQL日志概念，能够初步分析日志内容；
+掌握了MySQL的备份与恢复方法；
+掌握了MySQL的账号权限管理方法，实现安全设置的配置。
  */

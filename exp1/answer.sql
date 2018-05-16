@@ -40,3 +40,13 @@ select * from employee;
 UPDATE `enterprisedb`.`employee` t SET t.`sex` = '女', t.`department_name` = '规划部' WHERE t.`id` = 86003;
 
 select * from employee;
+
+drop database if exists enterprisedb;
+
+/*
+都是基本操作，没问题，
+ */
+/*
+掌握了MySQL在Windows平台上的安装与卸载的方法，
+掌握了数据库及表的创建、删除方法，掌握数据的插入，查询，修改，删除方法。
+ */

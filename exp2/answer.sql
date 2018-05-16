@@ -20,7 +20,7 @@ create table employee
   salary          decimal(10, 2)  not null
 )
   engine = MyISAM
-  AUTO_INCREMENT = 86011;
+  AUTO_INCREMENT = 86001;
 
 INSERT INTO `employee` (`name`, `sex`, `birthday`, `department_name`, `salary`)
 VALUES ('夏修诚', '男', '1988-05-15', '规划部', 8800.00), ('刘君昊', '男', '1995-07-11', '总经理办公室', 15000.00),
@@ -70,11 +70,11 @@ create view partyview as
 select TABLE_TYPE from information_schema.TABLES where TABLE_NAME = 'partyview';
 
 ALTER TABLE employee ADD level int NOT NULL DEFAULT 1;
-UPDATE `enterprisedb`.`employee` t SET t.`level` = 2 WHERE t.`id` = 86013;
-UPDATE `enterprisedb`.`employee` t SET t.`level` = 9 WHERE t.`id` = 86014;
-UPDATE `enterprisedb`.`employee` t SET t.`level` = 10 WHERE t.`id` = 86012;
-UPDATE `enterprisedb`.`employee` t SET t.`level` = 5 WHERE t.`id` = 86011;
-UPDATE `enterprisedb`.`employee` t SET t.`level` = 15 WHERE t.`id` = 86015;
+UPDATE `enterprisedb`.`employee` t SET t.`level` = 2 WHERE t.`id` = 86003;
+UPDATE `enterprisedb`.`employee` t SET t.`level` = 9 WHERE t.`id` = 86004;
+UPDATE `enterprisedb`.`employee` t SET t.`level` = 10 WHERE t.`id` = 86002;
+UPDATE `enterprisedb`.`employee` t SET t.`level` = 5 WHERE t.`id` = 86001;
+UPDATE `enterprisedb`.`employee` t SET t.`level` = 15 WHERE t.`id` = 86005;
 
 alter view partyview as
   select
@@ -87,10 +87,15 @@ alter view partyview as
 
 drop view partyview;
 
+drop database if exists enterprisedb;
 
 /*
 在题目1.2执行时，总出现Column ‘sex’ has duplicated value ‘?’ in ENUM问题，
 后来发现是数据库没设置编码所导致的错误，
 进行重建数据库时制定utf-8编码的修改后错误消除，
 从而说明默认编码的数据库建表时不能带有中文；
+ */
+/*
+掌握了创建指定引擎的数据库，及修改数据库的存储引擎的方法。
+掌握了MySQL索引的创建、删除方法。掌握MySQL视图的创建，修改，删除方法。
  */

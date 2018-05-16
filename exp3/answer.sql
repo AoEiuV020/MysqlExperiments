@@ -1,5 +1,4 @@
 /*
-http://www.njliaohua.com/lhd_6l7jy1utce9ersb9r12j_1.html
 http://www.doc88.com/p-6367672222799.html
  */
 
@@ -18,6 +17,7 @@ CREATE TABLE salerecords
   number int DEFAULT 0  NOT NULL
 );
 
+delimiter ;;
 create procedure
   defaultInsert(in pId     int, in pName varchar(255), in pPrice decimal(10, 2),
                 in pNumber int)
@@ -25,12 +25,15 @@ create procedure
     insert into salerecords (id, name, price, number)
       value (pId, pName, pPrice, pNumber);
   end;
+;;
+delimiter ;
 call defaultInsert(1, '苹果', 3.33, 2831);
 call defaultInsert(2, '梨', 4.21, 1234);
 call defaultInsert(3, '葡萄', 1.66, 4321);
 select *
 from salerecords;
 
+delimiter ;;
 create procedure
   insertHundred(in pName varchar(255))
   begin
@@ -58,11 +61,14 @@ create procedure
       set i = i + 1;
     end while;
   end;
+;;
+delimiter ;
 call insertHundred('西瓜');
 select *
 from salerecords
 limit 10;
 
+delimiter ;;
 create procedure
   deleteBetween(in minId int, in maxId int)
   begin
@@ -70,27 +76,35 @@ create procedure
     where id between minId and maxId
           and id % 2 = 0;
   end;
+;;
+delimiter ;
 call deleteBetween(4, 10);
 select *
 from salerecords
 limit 10;
 
+delimiter ;;
 create event insertEvent
   on schedule
     every 3 second
 do
   insert into salerecords (name, price, number)
     value ('木瓜', 10.01, 2345);
+;;
 create event cleanEvent
   on schedule
     every 30 second
 do
   truncate table salerecords;
+;;
+delimiter ;
 set global event_scheduler = true;
 select count(*)
 from salerecords;
 
 set global event_scheduler = false;
+truncate table salerecords;
+delimiter ;;
 CREATE TABLE sale_backup
 (
   id     int PRIMARY KEY AUTO_INCREMENT,
@@ -98,6 +112,7 @@ CREATE TABLE sale_backup
   price  decimal(10, 2) NOT NULL,
   number int DEFAULT 0  NOT NULL
 );
+;;
 create trigger backupTrigger
   after insert
   on salerecords
@@ -105,6 +120,8 @@ create trigger backupTrigger
   begin
     insert into sale_backup value (NEW.id, NEW.name, NEW.price, NEW.number);
   end;
+;;
+delimiter ;
 call insertHundred('西瓜');
 select *
 from sale_backup
@@ -122,6 +139,7 @@ insert into salerecords (name, price, number)
   value ('开心果', 0.80, 654321);
 rollback to state;
 commit;
+select * from salerecords;
 
 /*
 共享锁【S锁】
@@ -132,9 +150,13 @@ commit;
 这保证了其他事务在T释放A上的锁之前不能再读取和修改A。
  */
 
--- mysql5.6以下版本判断是否支持分区功能，
+/*
+mysql5.6以下版本判断是否支持分区功能，
+ */
 show variables like 'have_partitioning';
--- mysql5.6以上版本判断是否支持分区功能，
+/*
+mysql5.6以上版本判断是否支持分区功能，
+ */
 show plugins;
 
 alter table salerecords
@@ -166,14 +188,25 @@ select
 from information_schema.PARTITIONS
 where TABLE_NAME = 'salerecords';
 
+alter table salerecords
+  remove partitioning;
+drop database if exists salesdb;
 
 /*
+在题目1.3执行时，出现语法错误，
+后来发现是没有设置分隔符，
+说明多行的操作比如存储过程，事件调度，触发器，都设置非默认的分隔符才行，
+在题目3.1执行时，总是出现‘Duplicate entry '127' for key 'PRIMARY'’，
+后来发现是前面的备份触发器没有关闭，当我清空了salerecords却没有清空sale_backup后插入数据时sale_backup的主键就会冲突，
+停止触发器‘drop trigger backupTrigger;’就没事了，
 在题目4.1执行时，我先判断当前mysql服务是否支持分区，
 原本是打印变量'have_partitioning'判断，
 但是mysql5.7不再支持这种方式判断，
 改用‘show plugins;’打印插件列表看是否有‘partition’插件来判断，
 结果显示确实支持分区功能，
-在题目3.1执行时，总是出现‘Duplicate entry '127' for key 'PRIMARY'’，
-后来发现是前面的备份触发器没有关闭，当我清空了salerecords却没有清空sale_backup后插入数据时sale_backup的主键就会冲突，
-停止触发器‘drop trigger backupTrigger;’就没事了，
 */
+/*
+掌握了创建MySQL存储过程的创建方法，掌握MySQL事件调度器的使用。
+掌握了MySQL触发器的定义方法，MySQL的事务控制方法，回滚操作。
+掌握了利用分区技术实现MySQL的数据存储方法。
+ */
