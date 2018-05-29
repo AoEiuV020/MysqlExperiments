@@ -290,7 +290,7 @@ call checkPurchase(1, @sCheck);
 select @sCheck;
 
 /*
- * 一个月销售总额最多的商家，
+ * 一个月销售总额最多的商家，为了测试，先重新完成了一个订单，
  */
 delimiter ;;
 create procedure
@@ -342,8 +342,10 @@ delimiter ;
 call winnerGoods(@winnerStoreId, @winnerGoodsId);
 select @winnerGoodsId;
 
+/*
+ * 为了测试备份订单表先删除订单表数据，
+ */
 delete from `order`;
-
 /*
  * 备份订单表，
  */
@@ -382,7 +384,7 @@ create trigger backupTrigger
 ;;
 delimiter ;
 /*
- * 用户下订单，
+ * 用户重新下订单，
  */
 START TRANSACTION;
 INSERT INTO `order` (`store_id`, `user_id`) VALUES (1, 1);
@@ -399,6 +401,9 @@ commit;
 然后是优化检索的sql语句，重点在于联表查询时是否确实用上了建立的索引，几种join方式是否选择正确，
 另外还有缓存和锁的优化，合理配置缓存提高缓存命中率，以及确保不发生死锁的情况尽量使用行锁保证并发效率，
  */
+/*
+以在订单表中建立创建时间的索引为例，
+ */
 CREATE INDEX order_add_time_index
   ON `order` (add_time);
 
@@ -410,8 +415,11 @@ CREATE INDEX order_add_time_index
 再通过log_bin恢复到灾难发生前的正常数据，
  */
 /*
+# 备份数据库，
 mysqldump mall_B14040417 -rdump.sql -uroot -prootlocal
+# 恢复数据库，
 mysql mall_B14040417 -uroot -prootlocal < dump.sql
+# 恢复log_bin,
 sudo mysqlbinlog --no-defaults  --start-position=1734  --stop-position=2026 /var/lib/mysql/mysql-bin.000001 |mysql -uroot -prootlocal mall_B14040417
  */
 
