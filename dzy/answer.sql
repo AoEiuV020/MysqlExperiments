@@ -423,4 +423,4 @@ mysql mall_B14040417 -uroot -prootlocal < dump.sql
 sudo mysqlbinlog --no-defaults  --start-position=1734  --stop-position=2026 /var/lib/mysql/mysql-bin.000001 |mysql -uroot -prootlocal mall_B14040417
  */
 
-# drop database if exists mall_B14040417;
+drop database if exists mall_B14040417;
